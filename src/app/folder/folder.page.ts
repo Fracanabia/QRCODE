@@ -72,9 +72,24 @@ export class FolderPage implements OnInit {
 
   async startScanner() {
     try {
-      const barcodeScanner = await this.barcodeScanner.scan();
+      const options = {
+        preferFrontCamera: true, // iOS and Android
+        showFlipCameraButton: true, // iOS and Android
+        showTorchButton: true, // iOS and Android
+        torchOn: true, // Android, launch with the torch switched on (if available)
+        saveHistory: true, // Android, save scan history (default false)
+        prompt: 'Coloque um QRCode dentro da área de digitalização', // Android
+        resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+        formats: 'QR_CODE', // default: all but PDF_417 and RSS_EXPANDED
+        orientation: 'portrait', // Android only (portrait|landscape), default unset so it rotates with the device
+        disableAnimations: true, // iOS
+        disableSuccessBeep: false, // iOS and Android
+      };
+      const barcodeScanner = await this.barcodeScanner.scan(options);
       this.scaner = barcodeScanner;
-      this.confirmScheduler();
+      if (!this.scaner.cancelled) {
+        this.confirmScheduler();
+      }
     } catch (error) {
       console.log(
         '🚀 ~ file: folder.page.ts ~ line 42 ~ FolderPage ~ startScanner ~ error',
