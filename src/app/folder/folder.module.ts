@@ -1,20 +1,20 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-
+import { QRCodeModule } from 'angularx-qrcode';
 import { FolderPageRoutingModule } from './folder-routing.module';
-
 import { FolderPage } from './folder.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    QRCodeModule,
     IonicModule,
-    FolderPageRoutingModule
+    ReactiveFormsModule,
+    FolderPageRoutingModule,
   ],
-  declarations: [FolderPage]
+  declarations: [FolderPage],
 })
 export class FolderPageModule {}
