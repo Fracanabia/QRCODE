@@ -35,3 +35,11 @@ cordova-plugin-statusbar 2.4.2 "StatusBar"
 cordova-plugin-whitelist 1.3.3 "Whitelist"
 phonegap-plugin-barcodescanner 8.1.0 "BarcodeScanner"
 ```
+
+## iOS - Permissions
+
+```xml
+<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
+    <string>To scan barcodes</string>
+</edit-config>
+```
