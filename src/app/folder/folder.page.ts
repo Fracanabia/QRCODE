@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import {
+  PDFGenerator,
+  PDFGeneratorOptions,
+} from '@ionic-native/pdf-generator/ngx';
 import { AlertController } from '@ionic/angular';
 
 type Scaner = {
@@ -10,10 +14,6 @@ type Scaner = {
   text: string;
 };
 
-type UnitSchedule = {
-  id: number;
-  patient: string;
-};
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.page.html',
@@ -32,7 +32,8 @@ export class FolderPage implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly barcodeScanner: BarcodeScanner,
     private readonly alertController: AlertController,
-    private readonly formBuilder: FormBuilder
+    private readonly formBuilder: FormBuilder,
+    private readonly pdfGenerator: PDFGenerator
   ) {}
 
   ngOnInit() {
@@ -45,6 +46,32 @@ export class FolderPage implements OnInit {
     this.folder = this.activatedRoute.snapshot.paramMap.get('id');
   }
 
+  generatorPDF() {
+    const options: PDFGeneratorOptions = {
+      documentSize: 'A6',
+      type: 'share',
+      landscape: 'landscape',
+      fileName: 'card',
+    };
+
+    const cardDocument = document.getElementById('card');
+
+    this.pdfGenerator
+      .fromData(cardDocument.outerHTML, options)
+      .then((base64String) => {
+        console.log(
+          '🚀 ~ file: folder.page.ts ~ line 58 ~ FolderPage ~ generatorPDF ~ base64String',
+          base64String
+        );
+      })
+      .catch((error) => {
+        console.log(
+          '🚀 ~ file: folder.page.ts ~ line 60 ~ FolderPage ~ generatorPDF ~ error',
+          error
+        );
+      });
+  }
+
   async confirmScheduler() {
     const alert = await this.alertController.create({
       header: 'Confirmar!',
@@ -54,14 +81,20 @@ export class FolderPage implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel: blah');
+          handler: (cancel) => {
+            console.log(
+              '🚀 ~ file: folder.page.ts ~ line 91 ~ FolderPage ~ confirmScheduler ~ Cancelar',
+              cancel
+            );
           },
         },
         {
           text: 'Confirmar',
-          handler: () => {
-            console.log('Confirm Okay');
+          handler: (confirm) => {
+            console.log(
+              '🚀 ~ file: folder.page.ts ~ line 95 ~ FolderPage ~ confirmScheduler ~ confirm',
+              confirm
+            );
           },
         },
       ],
@@ -73,7 +106,7 @@ export class FolderPage implements OnInit {
   async startScanner() {
     try {
       const options = {
-        preferFrontCamera: true, // iOS and Android
+        preferFrontCamera: false, // iOS and Android
         showFlipCameraButton: true, // iOS and Android
         showTorchButton: true, // iOS and Android
         torchOn: true, // Android, launch with the torch switched on (if available)
